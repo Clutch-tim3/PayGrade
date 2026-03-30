@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SalaryDataPoint {
+  id              String    @id @default(cuid())
+  job_title_raw   String
+  job_title_norm  String
+  title_vector    Unsupported("tsvector")?
+  company_name    String?
+  salary_min      Float?
+  salary_max      Float?
+  salary_median   Float?
+  currency        String    @default("USD")
+  salary_type     String    @default("annual")
+  city            String?
+  country         String    @default("US")
+  remote          Boolean   @default(false)
+  source          String
+  source_url      String?
+  source_date     DateTime?
+  confidence      Float     @default(0.5)
+  experience_level String?
+  employment_type String?
+  createdAt       DateTime  @default(now())
+
+  @@index([job_title_norm])
+  @@index([company_name])
+  @@index([country, city])
+}
+
+model UserSalarySubmission {
+  id              String    @id @default(cuid())
+  job_title       String
+  company_name    String?
+  total_comp      Float
+  base_salary     Float
+  bonus           Float?
+  equity          Float?
+  currency        String
+  city            String
+  country         String
+  years_exp       Int?
+  education_level String?
+  employment_type String
+  offer_year      Int
+  submission_hash String    @unique
+  createdAt       DateTime  @default(now())
+}
+
+model SalaryIntelligenceCache {
+  id              String    @id @default(cuid())
+  cache_key       String    @unique
+  result          Json
+  data_points_count Int
+  confidence      Float
+  expires_at      DateTime
+  createdAt       DateTime  @default(now())
+
+  @@index([cache_key])
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  tier                String    @default("free")
+  extensionpay_id     String?
+  lookups_this_month  Int       @default(0)
+  lookups_limit       Int       @default(10)
+  credits_earned      Int       @default(0)
+  createdAt           DateTime  @default(now())
+}
+
+model MagicLink {
+  id          String    @id @default(cuid())
+  email       String
+  token       String    @unique
+  used        Boolean   @default(false)
+  expires_at  DateTime
+  createdAt   DateTime  @default(now())
+}
+
+model HotSearch {
+  id              String    @id @default(cuid())
+  role_location   String    @unique
+  search_count    Int       @default(1)
+  last_searched   DateTime  @default(now())
+
+  @@index([search_count])
+}

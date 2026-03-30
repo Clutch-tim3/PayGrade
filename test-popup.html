@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PayGrade Popup</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .test-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .install-instructions {
+            background: #e7f3ff;
+            border: 1px solid #b6d4fe;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .install-instructions h3 {
+            margin-top: 0;
+            color: #084298;
+        }
+        .install-instructions ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #055160;
+        }
+        .test-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .test-btn:hover {
+            background-color: #0056b3;
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>PayGrade Extension Test</h1>
+        
+        <div class="install-instructions">
+            <h3>How to Install and Test the Extension</h3>
+            <ol>
+                <li>Open Chrome and navigate to <strong>chrome://extensions/</strong></li>
+                <li>Enable <strong>Developer mode</strong> (toggle in top-right corner)</li>
+                <li>Click <strong>Load unpacked</strong> and select the <strong>/Users/harry/PayGrade/extension/dist</strong> folder</li>
+                <li>The PayGrade extension should now appear in your Chrome toolbar</li>
+                <li>Click on the extension icon to test the popup</li>
+            </ol>
+        </div>
+        
+        <h3>Manifest Verification</h3>
+        <div id="manifest-status" class="status">Checking manifest...</div>
+        
+        <h3>Compiled Files</h3>
+        <div id="files-status" class="status">Checking compiled files...</div>
+        
+        <button class="test-btn" id="copy-path-btn">Copy Extension Path</button>
+    </div>
+
+    <script>
+        // Check if manifest file exists
+        fetch('/Users/harry/PayGrade/extension/dist/manifest.json')
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('manifest-status').textContent = '✓ Manifest file exists and is valid';
+                    document.getElementById('manifest-status').className = 'status success';
+                } else {
+                    throw new Error('Manifest file not found');
+                }
+            })
+            .catch(error => {
+                document.getElementById('manifest-status').textContent = `✗ Manifest file not found: ${error.message}`;
+                document.getElementById('manifest-status').className = 'status error';
+            });
+
+        // Check for compiled popup files
+        const fs = require('fs');
+        const path = '/Users/harry/PayGrade/extension/dist/';
+        
+        try {
+            const files = fs.readdirSync(path);
+            const requiredFiles = ['manifest.json', 'popup.html', 'popup.js', 'background.js', 'content.js'];
+            const missingFiles = requiredFiles.filter(file => !files.includes(file));
+            
+            if (missingFiles.length === 0) {
+                document.getElementById('files-status').textContent = '✓ All required files are compiled';
+                document.getElementById('files-status').className = 'status success';
+            } else {
+                document.getElementById('files-status').textContent = `✗ Missing files: ${missingFiles.join(', ')}`;
+                document.getElementById('files-status').className = 'status error';
+            }
+        } catch (error) {
+            document.getElementById('files-status').textContent = `✗ Error checking files: ${error.message}`;
+            document.getElementById('files-status').className = 'status error';
+        }
+
+        // Copy extension path to clipboard
+        document.getElementById('copy-path-btn').addEventListener('click', async () => {
+            const path = '/Users/harry/PayGrade/extension/dist';
+            try {
+                await navigator.clipboard.writeText(path);
+                alert('Extension path copied to clipboard');
+            } catch (error) {
+                alert('Failed to copy path: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

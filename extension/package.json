@@ -1,0 +1,39 @@
+{
+  "name": "paygrade-extension",
+  "version": "1.0.0",
+  "description": "PayGrade — Salary Intelligence for Every Job Listing",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack --mode development --watch",
+    "build": "webpack --mode production",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@types/webextension-polyfill": "^0.10.7",
+    "copy-webpack-plugin": "^14.0.0",
+    "css-loader": "^6.9.1",
+    "html-webpack-plugin": "^5.6.0",
+    "style-loader": "^3.3.4",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.3",
+    "webextension-polyfill": "^0.10.0",
+    "webpack": "^5.90.1",
+    "webpack-cli": "^5.1.4"
+  },
+  "keywords": [
+    "chrome-extension",
+    "salary",
+    "job-listings",
+    "compensation",
+    "pay"
+  ],
+  "author": "PayGrade",
+  "license": "MIT"
+}
